@@ -1,53 +1,60 @@
 import java.util.*;
 
 
-class DFS {
-    private final ArrayList<Integer>[] lists;
-    private final boolean[] visited;
+class Graph {
+    private final int verticles;
+    private final LinkedList<Integer>[] adj;
+    private int[] path;
+    List<Integer> tempArray = new ArrayList<>();
 
-    DFS(int numberOfPoints) {
-        lists = new ArrayList[numberOfPoints];
-        visited = new boolean[numberOfPoints];
-
-        for (int i = 0; i < numberOfPoints; i++)
-            lists[i] = new ArrayList<>();
+    Graph(int verticles) {
+        this.verticles = verticles;
+        adj = new LinkedList[verticles];
+        for (int i = 0; i < verticles; ++i)
+            adj[i] = new LinkedList();
     }
 
-    void addEdge(int parent, int child) {
-        lists[parent].add(child);
+    int[] getPath() {
+        return path;
     }
 
-    void search(int index) {
-        visited[index] = true;
-        System.out.print(index + " ");
+    void addEdge(int v, int e) {
+        adj[v].add(e);
+    }
 
-        for (Object o : lists[index]) {
-            int adj = (int) o;
-            if (!visited[adj])
-                search(adj);
+    void DFSUtil(int v, boolean[] visited) {
+        visited[v] = true;
+        tempArray.add(v);
+        System.out.print(v + " ");
+        for (int n : adj[v]) {
+            if (!visited[n])
+                DFSUtil(n, visited);
         }
+        path = tempArray.stream().mapToInt(i -> i).toArray();
     }
-
-
+    void DFS(int verticle) {
+        boolean[] visited = new boolean[verticles];
+        DFSUtil(verticle, visited);
+    }
     public static void main(String[] args) {
-        DFS d = new DFS(7);
+        Graph g = new Graph(6);
+        g.addEdge(0, 1);
+        g.addEdge(0, 2);
+        g.addEdge(1, 2);
+        g.addEdge(2, 0);
+        g.addEdge(2, 3);
+        g.addEdge(3, 4);
+        g.addEdge(4, 5);
+        g.addEdge(5, 0);
 
-        d.addEdge(0, 1);
-        d.addEdge(0, 2);
-        d.addEdge(1, 2);
-        d.addEdge(2, 3);
-        d.addEdge(3, 4);
-        d.addEdge(2, 4);
-        d.addEdge(3, 5);
-
-
-        d.search(0);
+        g.DFS(2);
     }
 }
 
-
-//      0            5
-//    /   \         /
-//   1 ---- 2 ---- 3
-//             \ /
-//              4
+//
+//
+//   0 -- 1
+//    \  /
+//     2  -- 3 -- 4 -- 5
+//
+//
